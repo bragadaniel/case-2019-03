@@ -1,52 +1,33 @@
-import map from 'lodash/map';
-import filter from 'lodash/filter';
-import flattenDeep from 'lodash/flattenDeep';
-import flattenDepth from 'lodash/flattenDepth';
-import union from 'lodash/union';
-
+import _map from 'lodash/map';
+import _filter from 'lodash/filter';
+import _flattenDepth from 'lodash/flattenDepth';
+import _union from 'lodash/union';
+import _get from 'lodash/get'
 import drugs from '../services/mock/medicamentos.json';
 import drugsIteraction from '../services/mock/interacao_medicamentosa.json';
 
-const normalizeFilter = (data: any) => flattenDeep(data);
+const normalizeFilter = (data: any) => _map(data, item => ({
+  IdMedicamento: _get(item, 'IdMedicamento'),
+  Farmacos: _get(item, 'Farmacos', [])
+}))
 
-const safeDrugsIteraction = (data: any) => {
-  const safeDrug = map(data, item => {
-    const filtered = filter(drugsIteraction, iteraction => {
-      const { Farmaco1, Farmaco2 } = iteraction;
-      return item === Farmaco1 || item === Farmaco2;
-    });
-    return filtered;
-  });
-  return flattenDepth(safeDrug, 1);
-};
+const safeDrugsIteraction = (data: any) => _filter(drugsIteraction,
+  item => data.includes(item.Farmaco1) && data.includes(item.Farmaco2))
+
 
 const extractFarmacos = (data: any) => {
-  const obj = map(data, item => {
+  const obj = _map(data, (item) => {
     const { Farmacos } = item;
     return [Farmacos];
   });
-  return union(flattenDepth(obj, 2));
-};
-
-const resultIteraction = (dataFarmacos: string[], dataIteraction: any) => {
-  const resultFinal = map(dataFarmacos, item => {
-    const filtered = filter(dataIteraction, { Farmaco1: item });
-    const filtered2 = filter(dataIteraction, { Farmaco2: item });
-    return { filtered, filtered2 };
-  });
-  return resultFinal;
+  return _union(_flattenDepth(obj, 2));
 };
 
 export const verifyDrugsIteraction = (listOfDrugsById: string[]) => {
-  const listFiltered = map(listOfDrugsById, drugId => {
-    const filterById = filter(drugs, item => item.IdMedicamento === Number(drugId));
-    return filterById;
-  });
-
+  const listFiltered = _filter(drugs, item => listOfDrugsById.includes(String(item.IdMedicamento)))
   const normalized = normalizeFilter(listFiltered);
   const objectExtractFarmacos = extractFarmacos(normalized);
   const drugsIteractionMapping = safeDrugsIteraction(objectExtractFarmacos);
-  const resultDrugsIteraction = resultIteraction(objectExtractFarmacos, drugsIteractionMapping);
 
-  return resultDrugsIteraction;
+  return drugsIteractionMapping;
 };

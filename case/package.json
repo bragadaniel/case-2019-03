@@ -3,21 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@types/jest": "24.0.18",
-    "@types/node": "12.7.12",
-    "@types/reactstrap": "^8.0.5",
-    "bootstrap": "^4.3.1",
-    "classnames": "^2.2.6",
-    "lodash": "^4.17.15",
-    "react": "^16.10.2",
-    "react-dom": "^16.10.2",
-    "react-helmet": "^5.2.1",
-    "react-scripts": "3.2.0",
-    "reactstrap": "^8.0.1",
-    "typescript": "3.6.4"
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.80",
+    "bootstrap": "^5.3.2",
+    "classnames": "^2.5.1",
+    "lodash": "^4.17.21",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-helmet": "^6.1.0",
+    "react-scripts": "5.0.1",
+    "reactstrap": "^9.2.2",
+    "typescript": "^4.9.5"
   },
   "scripts": {
-    "start": "react-scripts start && tsc -p .",
+    "start": "react-scripts start",
     "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -39,16 +38,18 @@
     ]
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.144",
-    "@types/react": "16.9.5",
-    "@types/react-dom": "16.9.1",
-    "@types/react-helmet": "^5.0.11",
-    "@types/classnames": "^2.2.9",
-    "husky": "^3.0.8",
-    "prettier": "1.18.2",
-    "pretty-quick": "^1.11.0",
-    "tslint": "^5.20.0",
-    "tslint-react": "^4.1.0"
+    "@types/classnames": "^2.3.1",
+    "@types/lodash": "^4.14.202",
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
+    "@types/react-helmet": "^6.1.11",
+    "@types/reactstrap": "^8.7.2",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^8.0.3"
   },
   "husky": {
     "hooks": {

@@ -1,36 +1,84 @@
 import React from 'react';
-import map from 'lodash/map';
+import _map from 'lodash/map';
+import _isEmpty from 'lodash/isEmpty'
 import styles from './style.module.css';
-
-import { ListGroup, ListGroupItem, Alert } from 'reactstrap';
+import { ListGroup, Container, Row, Col, ListGroupItem, Alert } from 'reactstrap';
 import { findDataDrug } from './utils/findDrugs';
+import { DrugInteractions } from './components/DrugInteractions';
 
-export const MedicalRecordsDetails = ({ data }: any) => {
-  if (!data || data.length === 0) {
+interface Drug {
+  Nome: string;
+  ViaAdministracao: string;
+  Concentracao?: string;
+}
+interface DrugInteraction {
+  Descricao: string;
+  Farmaco1: string;
+  Farmaco2: string;
+  Nome: string;
+}
+
+interface Props {
+  data: {
+    drugsInteractions: DrugInteraction[];
+    selectMedicine: Drug[];
+  };
+}
+
+export const MedicalRecordsDetails: React.FC<Props> = ({ data }) => {
+  const { drugsInteractions, selectMedicine } = data
+  if (!selectMedicine || selectMedicine.length === 0) {
     return (
       <Alert color="warning">
         <h5>Ainda não foram prescritos medicamentos!</h5>
       </Alert>
     );
   }
-  const listItems = findDataDrug(data);
 
-  const list = map(listItems, (item, idx) => {
+  const listItems = findDataDrug(selectMedicine);
+  const list = _map(listItems, (item, idx) => {
     const { Nome, ViaAdministracao, Concentracao } = item;
 
     return (
-      <ListGroupItem key={`${idx}`} className={styles.listDrugs}>
-        <b>Nome do medicamento: {Nome}</b>
-        {Concentracao && <span>Posologia: {Concentracao}</span>}
-        <span>Via adminstração: {ViaAdministracao}</span>
+      <ListGroupItem key={idx} className={styles.listDrugs}>
+        <Row>
+          <Col>
+            <span>Nome do medicamento: </span><b>{Nome}</b>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            {Concentracao && <span>Posologia: {Concentracao}</span>}
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <span>Via adminstração: {ViaAdministracao}</span>
+          </Col>
+        </Row>
       </ListGroupItem>
     );
   });
 
   return (
-    <section>
-      <h4>Medicamentos prescritos</h4>
-      <ListGroup>{list}</ListGroup>
-    </section>
+    <Container>
+      <Row>
+        <Col>
+          <h4>Medicamentos prescritos</h4>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <ListGroup>{list}</ListGroup>
+        </Col>
+      </Row>
+      {!_isEmpty(drugsInteractions) &&
+        <Row>
+          <Col md={12}>
+            <DrugInteractions drugsInteractions={drugsInteractions} />
+          </Col>
+        </Row>
+      }
+    </Container>
   );
 };

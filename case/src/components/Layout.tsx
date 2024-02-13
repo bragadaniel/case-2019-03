@@ -1,7 +1,9 @@
 import React from 'react';
 import { Helmet } from 'react-helmet';
-
-export const Layout: React.FC = ({ children }) => {
+interface LayoutInterface {
+  children: React.ReactNode
+}
+export const Layout = ({ children }: LayoutInterface) => {
   const meta = [
     {
       name: 'keywords',

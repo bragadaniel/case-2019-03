@@ -8,12 +8,15 @@ import {
 } from '../../utils/functions';
 import { Container } from 'reactstrap';
 import { verifyDrugsIteraction } from '../../utils/verifyDrugsInteraction';
+import _isEmpty from 'lodash/isEmpty'
+import _cloneDeep from 'lodash/cloneDeep'
 
 export const MedicalRecords = () => {
   const [nameMedic, setNameMedic] = useState('');
   const [namePatient, setNamePatient] = useState('');
   const [selectMedicine, setSelecteMedicine] = useState<string[]>([]);
   const [hasPrescription, setHasPrescription] = useState(false);
+  const [drugsInteractions, setDrugsInteraction] = useState<any>([])
 
   const [payloaStorage, setPayloadStorage] = useState<any>([]);
 
@@ -33,44 +36,50 @@ export const MedicalRecords = () => {
         namePatient,
         nameMedic,
         selectMedicine,
+        drugsInteractions
       },
     ]);
   };
 
   useEffect(() => {
-    const stringify = JSON.stringify(payloaStorage);
-    localStorage.setItem('#prescription', stringify);
-  }, [payloaStorage]);
+    if (!_isEmpty(payloaStorage)) {
+      const stringify = JSON.stringify({ prescriptions: payloaStorage });
+      localStorage.setItem('#prescription', stringify);
+    }
+  }, [payloaStorage, drugsInteractions]);
+
+
+  useEffect(() => {
+    if (!_isEmpty(selectMedicine)) {
+      setDrugsInteraction(
+        verifyDrugsIteraction(selectMedicine)
+      )
+    }
+  }, [selectMedicine])
 
   const handleChange = (e: any) => {
-    const getCurrentElementId = (document.getElementById(e.currentTarget.id) as HTMLInputElement)
-      .checked;
-    const getCurrentElement = e.currentTarget.value;
-    getCurrentElementId
-      ? setSelecteMedicine([...selectMedicine, getCurrentElement])
-      : setSelecteMedicine(onRemoveSpecificItemInArray(selectMedicine, getCurrentElement));
+    const selectedsClone = _cloneDeep(selectMedicine)
+    const isChecked = e.currentTarget.checked;
+    const value = e.currentTarget.value;
+    isChecked
+      ? setSelecteMedicine([...selectedsClone, value])
+      : setSelecteMedicine(onRemoveSpecificItemInArray(selectedsClone, value));
   };
 
   const handleClickSeeMedicine = () => setHasPrescription(!hasPrescription);
 
-  // Fixme: funcao 'verifyDrugsIteraction()' ainda não retorna as interacoes medicamentosas
-  // faz apenas a busca por tipo de farmaco a intersecção entre os
-  // tipos de farmaco ficara para uma proxima; =/
-  verifyDrugsIteraction(selectMedicine);
   return (
     <Layout>
       <Container>
-        <section>
-          <h2>Prescrição médica</h2>
-          <FormIdentification
-            onSubmit={handleSubmit}
-            onClick={handleClickSeeMedicine}
-            onChangeMedic={handleChangeMedic}
-            onChangePattient={handleChangePattient}
-            onChangeMedicine={handleChange}
-            hasPrescription={hasPrescription}
-          />
-        </section>
+        <h2>Prescrição médica</h2>
+        <FormIdentification
+          onSubmit={handleSubmit}
+          onClick={handleClickSeeMedicine}
+          onChangeMedic={handleChangeMedic}
+          onChangePattient={handleChangePattient}
+          onChangeMedicine={handleChange}
+          hasPrescription={hasPrescription}
+        />
       </Container>
     </Layout>
   );
